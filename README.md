@@ -1,5 +1,23 @@
 RideGo — Ride-Hailing System (Capstone)
-A JavaFX desktop application for a ride-hailing system (Passenger/Driver roles), backed by a MySQL database (via XAMPP) and using Java Serialization for session management.
+A JavaFX desktop application for a ride-hailing system (Passenger/Driver roles), backed by a MySQL database (via XAMPP), using Java Serialization for session management, and three GoF design patterns described below.
+
+Design patterns
+1. Singleton (Creational) — AppMemory
+Only one AppMemory instance ever exists (private constructor + static instance field + getInstance()). Every screen that needs the database goes through that same shared instance, so there's exactly one point of database access for the whole app.
+
+Singleton pattern diagram
+
+2. Facade (Structural) — RideBookingFacade
+Booking a ride actually touches two separate subsystems: choosing a pricing algorithm (com.ridehailing.fare) and persisting the ride (AppMemory). BookRideView doesn't need to know about either one individually — it just calls RideBookingFacade.bookRide(...), which coordinates both behind one simple method.
+
+Facade pattern diagram
+
+3. Strategy (Behavioral) — FareStrategy
+FareStrategy is an interface with two interchangeable implementations, StandardFareStrategy and PremiumFareStrategy. RideBookingFacade picks one at runtime based on the ride type the passenger selects on the Book a Ride screen. A new pricing scheme (e.g. surge pricing) can be added later as a new class implementing FareStrategy — no existing code has to change.
+
+Strategy pattern diagram
+
+(Diagrams above are included as SVG files in diagrams/. If you want them in the exact app.diagrams.net/draw.io format your instructor asked for, import these SVGs into app.diagrams.net — File → Import — and re-export, or redraw them there directly; they're simple 2–4 box diagrams.)
 
 Software system overview
 RideGo lets a Passenger register, log in, book a ride, track their rides, pay for a completed ride, and rate their driver. A Driver registers, logs in, accepts pending ride requests, updates their status, starts/ends a ride, and views their earnings. All data (passengers, drivers, vehicles, rides, payments) is stored in a MySQL database; the app talks to it through JDBC.
